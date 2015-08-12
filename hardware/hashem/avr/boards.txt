@@ -1,4 +1,4 @@
-model01.name=Keyboardio model01
+model01.name=Hashem v00
 model01.vid.0=0x1209
 model01.pid.0=0x2301
 model01.upload.tool=avrdude
@@ -22,7 +22,7 @@ model01.build.mcu=atmega32u4
 model01.build.f_cpu=16000000L
 model01.build.vid=0x1209
 model01.build.pid=0x2301
-model01.build.usb_product="Keyboardio model01"
-model01.build.core=keyboardio
-model01.build.variant=model01
+model01.build.usb_product="Hashem v00"
+model01.build.core=hashem
+model01.build.variant=v00
 model01.build.extra_flags={build.usb_flags}

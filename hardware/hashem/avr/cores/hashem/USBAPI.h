@@ -205,7 +205,7 @@ extern Mouse_ Mouse;
 #define CONSUMER_CONTROL_EJECT              8
 
 //	Low level key report: up to 6 keys and shift, ctrl etc at once
-#define KEYREPORT_KEYCOUNT	0x06
+#define KEYREPORT_KEYCOUNT	0x18
 typedef struct
 {
 	uint8_t modifiers;

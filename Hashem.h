@@ -23,18 +23,12 @@ void setup();
 #include "key_defs.h"
 #include "KeyboardConfig.h"
 
-#include "keymaps_generated.h"
 #include "debouncing.h"
-#include "led_control.h"
 #include "digitalWriteFast.h"
-#include <Wire.h>
-#include "sx1509_library.h"
 
 //extern int usbMaxPower;
 #define DEBUG_SERIAL 0
 
-char x;
-char y;
 
 byte matrixState[ROWS][COLS];
 
@@ -43,37 +37,13 @@ byte charsReportedLastTime[KEYS_HELD_BUFFER]; // A bit vector for the 256 keys w
 
 
 long reporting_counter = 0;
-byte primary_keymap = 0;
-byte temporary_keymap = 0;
 
-
-
-byte commandBuffer[32];
-int commandBufferSize;
-bool commandMode;
-bool commandPromptPrinted;
-
-
-// Console related 
-void process_command_buffer();
-
-// EEPROM related
-void save_primary_keymap(byte keymap);
-byte load_primary_keymap();
 
 
 // Keyboard debugging
 void report(byte row, byte col, boolean value);
 void report_matrix();
 
-
-// Mouse-related methods
-
-double mouse_accel (double cycles);
-void handle_mouse_movement( char x, char y);
-void begin_warping();
-void end_warping();
-void warp_mouse(Key key);
 
 // hardware keymap interaction
 void setup_pins();
@@ -84,10 +54,7 @@ void scan_matrix();
 // key matrix
 void setup_matrix();
 void reset_matrix();
-void handle_immediate_action_during_matrix_scan(Key keymapEntry, byte matrixStateEntry);
 
-// keymaps
-void set_keymap_keymap(Key keymapEntry, byte matrixStateEntry);
 
 // sending events to the computer
 void record_key_being_pressed(byte character);
@@ -99,8 +66,6 @@ void send_key_events();
 
 void press_key(Key mappedKey);
 void release_key(Key mappedKey);
-
-int setup_sx1509(sx1509Class sx1509, int colpins[], int rowpins[]);
 
 #ifndef VERSION
 #define VERSION "locally-built"

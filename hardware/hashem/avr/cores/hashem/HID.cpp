@@ -215,12 +215,6 @@ extern const u8 _hidReportDescriptor[] PROGMEM;
 const u8 _hidReportDescriptor[] = {
 
     HID_REPORT_KEYBOARD,
-    HID_REPORT_MOUSE_RELATIVE,
-#ifdef HID_MOUSE_ABS_ENABLED
-    HID_REPORT_MOUSE_ABSOLUTE,
-#endif
-    HID_REPORT_SYSTEMCONTROL,
-    HID_REPORT_CONSUMERCONTROL,
 #if RAWHID_ENABLED
     HID_REPORT_RAWHID
 #endif
