@@ -128,14 +128,10 @@ void Recv(volatile u8* data, u8 count)
 	while (count--)
 		*data++ = UEDATX;
 	
-	RXLED1;					// light the RX LED
-	RxLEDPulse = TX_RX_LED_PULSE_MS;	
 }
 
 static inline u8 Recv8()
 {
-	RXLED1;					// light the RX LED
-	RxLEDPulse = TX_RX_LED_PULSE_MS;
 
 	return UEDATX;	
 }
@@ -316,8 +312,6 @@ int USB_Send(u8 ep, const void* d, int len)
 				ReleaseTX();
 		}
 	}
-	TXLED1;					// light the TX LED
-	TxLEDPulse = TX_RX_LED_PULSE_MS;
 	return r;
 }
 
@@ -719,10 +713,6 @@ ISR(USB_GEN_vect)
 #endif
 		
 		// check whether the one-shot period has elapsed.  if so, turn off the LED
-		if (TxLEDPulse && !(--TxLEDPulse))
-			TXLED0;
-		if (RxLEDPulse && !(--RxLEDPulse))
-			RXLED0;
 	}
 
 	// the WAKEUPI interrupt is triggered as soon as there are non-idle patterns on the data
@@ -778,7 +768,6 @@ void USBDevice_::attach()
 	UDINT &= ~((1<<WAKEUPI) | (1<<SUSPI)); // clear already pending WAKEUP / SUSPEND requests
 	UDIEN = (1<<EORSTE) | (1<<SOFE) | (1<<SUSPE);	// Enable interrupts for EOR (End of Reset), SOF (start of frame) and SUSPEND
 	
-	TX_RX_LED_INIT;
 }
 
 void USBDevice_::detach()
