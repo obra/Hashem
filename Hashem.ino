@@ -4,80 +4,50 @@
 
 #include "Hashem.h"
 #include "digitalWriteFast.h"
-#include <Wire.h>
 
 
 #define TS(X) //Serial.print(micros() );Serial.print("\t");Serial.println(X);
 
 
-void setup_matrix()
-{
-  reset_key_report();
-  //blank out the matrix.
-  for (byte col = 0; col < COLS; col++) {
-    for (byte row = 0; row < ROWS; row++) {
-      matrixState[row][col] = 0;
-    }
-  }
-}
-
-
-
-void scan_matrix()
-{
-  //scan the Keyboard matrix looking for connections
-  for (byte row = 0; row < LEFT_ROWS; row++) {
-      matrixState[row][col] <<= 1;
-
-      matrixState[row][(COLS - 1) - col] <<= 1;
-
-      TS("Reading left pin")
-      if (left_initted && leftsx1509.readPrefetchedPin(left_colpins[col])) {
-        matrixState[row][col] |= 0;
-      } else {
-        matrixState[row][col] |= 1;
-      }
-
-
-      TS("calling send_key_event")
-      send_key_event(row, col);
-
-    }
-    TS("clearing output pins")
-      leftsx1509.updatePinState(left_rowpins[row], HIGH);
-  }
-  TS("Releasing keys not being pressed")
-  release_keys_not_being_pressed();
-  TS("Sending key report");
-  Keyboard.sendCurrentReport();
-  TS("clearing internal key report")
-  reset_key_report();
-}
-
 void setup()
 {
   wdt_disable();
   Keyboard.begin();
-  setup_matrix();
-  setup_pins();
+  
+   reset_key_report();
+  //blank out the matrix.
+  for (byte key = 0; key < KEYS; key++) {
+    physicalState[key] = 0;
+  }
+
+    for (byte key = 0; key < KEYS; key++) {
+    make_input(pins[key]);
+  }
 }
 
 String myApp;
 
 void loop()
 {
-  TS("A noop takes...")
-  TS("about to scan the matrix")
-  scan_matrix();
-  TS("updating LEDs");
-  update_leds(temporary_keymap == NUMPAD_KEYMAP);
+  //scan the Keyboard looking for connections
+  for (byte key = 0; key < KEYS; key++) {
+    physicalState[key] <<= 1;
+
+    if (digitalRead(pins[key])) {
+      physicalState[key] |= 0;
+    } else {
+      physicalState[key] |= 1;
+    }
+
+    send_key_event(key);
+
+
+  }
+  release_keys_not_being_pressed();
+ Keyboard.sendCurrentReport();
+  reset_key_report();
 }
 
-
-
-
-
-//
 
 void release_keys_not_being_pressed()
 {
@@ -109,7 +79,7 @@ void release_keys_not_being_pressed()
 void record_key_being_pressed(byte character)
 {
   for (byte i = 0; i < KEYS_HELD_BUFFER; i++) {
-    // todo - deal with overflowing the 12 key buffer here
+    // todo - deal with overflowing the n key buffer here
     if (charsBeingReported[i] == 0x00) {
       charsBeingReported[i] = character;
       break;
@@ -125,47 +95,27 @@ void reset_key_report()
 }
 
 
-void send_key_event(byte row, byte col)
+void send_key_event(byte key)
 {
-  byte switchState = matrixState[row][col];
-  Key mappedKey = keymaps[temporary_keymap][row][col];
+  byte switchState = physicalState[key];
+  byte mappedKey = keymap[key];
 
-      if (key_is_pressed(switchState)) {
-        record_key_being_pressed(mappedKey.rawKey);
-        if (key_toggled_on (switchState)) {
-          press_key(mappedKey);
-        }
-      } else if (key_toggled_off (switchState)) {
-        release_key(mappedKey);
-      }
+  if (key_is_pressed(switchState)) {
+    record_key_being_pressed(mappedKey);
+    if (key_toggled_on (switchState)) {
+      Keyboard.press(mappedKey);
+    }
+  } else if (key_toggled_off (switchState)) {
+    Keyboard.release(mappedKey);
+  }
 
 }
-
-void press_key(Key mappedKey) {
-  Keyboard.press(mappedKey.rawKey);
-}
-
-void release_key(Key mappedKey) {
-  Keyboard.release(mappedKey.rawKey);
-}
-
 
 
 void make_input( int pin) {
-  sx1509.pinDir(pin, INPUT);  // Set SX1509 pin 1 as an input
-  sx1509.writePin(pin, HIGH);  // Activate pull-up
+  pinMode(pin, INPUT);  // Set pin as an input
+  digitalWrite(pin, HIGH);  // Activate pull-up
 
 
 }
 
-void make_output(int pin) {
-  sx1509.pinDir(pin, OUTPUT);
-  sx1509.writePin(pin, HIGH);
-
-}
-
-
-void setup_pins() {
-  left_initted = setup_sx1509(leftsx1509, left_colpins, left_rowpins);
-
-}
