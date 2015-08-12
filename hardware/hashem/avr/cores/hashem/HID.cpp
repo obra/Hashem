@@ -73,7 +73,7 @@ Keyboard_ Keyboard;
     0x81, 0x03,                      /*   INPUT (Cnst,Var,Abs) */ \
 \
       /* Keyboard keys */ \
-    0x95, 0x06,                      /*   REPORT_COUNT (6) */ \
+    0x95, KEYREPORT_KEYCOUNT,                      /*   REPORT_COUNT (6) */ \
     0x75, 0x08,                      /*   REPORT_SIZE (8) */ \
     0x15, 0x00,                      /*   LOGICAL_MINIMUM (0) */ \
     0x26, 0xDF, 0x00,                /*   LOGICAL_MAXIMUM (239) */ \
@@ -215,9 +215,6 @@ extern const u8 _hidReportDescriptor[] PROGMEM;
 const u8 _hidReportDescriptor[] = {
 
     HID_REPORT_KEYBOARD,
-#if RAWHID_ENABLED
-    HID_REPORT_RAWHID
-#endif
 };
 
 extern const HIDDescriptor _hidInterface PROGMEM;
