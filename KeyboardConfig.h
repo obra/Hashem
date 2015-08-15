@@ -5,8 +5,19 @@
 #define EEPROM_KEYMAP_LOCATION 0
 
 #define KEYS 24
-static const byte pins[KEYS] = { A5,A4,A3,A2,A1,A0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,MISO,MOSI,SCK,SS};
-static const byte keymap[KEYS] = { 'A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X'};
 
+/* Arduino Micro pins, scanning from left to right, top to down */
+static const byte pins[KEYS] = {
+     12, 11, 10, 9, 8,    7, 6, 5, 4, 3,
+    2, 0, 1, SS, MOSI,    13, A0, A1, A2, A3,
+               A4, A5,    MISO, SCK
+};
+
+/* Plover-compatible 24 key layout, scanning from left to right, top to down*/
+static const byte keymap[KEYS] = {
+  'q','w','e','r','t',    'u','i','o','p','[',
+  'a','s','d','f','g',    'j','k','l',';','\'',
+              'c','v',    'n','m'
+};
 
 #endif
